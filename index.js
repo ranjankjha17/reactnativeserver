@@ -7,9 +7,9 @@ require('dotenv').config();
 
 const app = express();
 const port = 5000;
-app.use(cors({
-    origin: 'http://localhost:19006'
-  }));
+// app.use(cors({
+//     origin: 'http://localhost:19006'
+//   }));
 
 // Express middleware to parse JSON
 app.use(express.json());
@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 // app.post('/upload', upload.single('photo'), (req, res) => {
 //   const { name,code, groupbc, rrnumber,cast,mobileno,id,photo } = req.body;
 //   //console.log("photo",photo)
-//   //console.log(req.body)
+//   console.log(req.body)
 //  // const imageData = req.file.buffer;
 //  const imageData=photo[0]
 
@@ -120,7 +120,8 @@ app.post('/create-group', async (req, res) => {
     }
   });
   
-  // Example function to promisify MySQL query
+  //Example function to promisify MySQL query
+  
   function queryAsync(sql, values) {
     return new Promise((resolve, reject) => {
       db.query(sql, values, (error, result) => {
