@@ -120,6 +120,25 @@ app.post('/create-group', async (req, res) => {
     }
   });
   
+
+  app.post('/create-form2', async (req, res) => {
+    try {
+      const { date, group, name,bcAmount,intNo,percentage,amount } = req.body;
+  
+      const sql = "INSERT INTO form2 (date, group_, name,bcamount,intNo,percentage,amount) VALUES (?, ?, ?,?,?,?,?)";
+      const result = await queryAsync(sql, [date, group, name,bcAmount,intNo,percentage,amount]);
+  
+      // Assuming queryAsync is a function to promisify the MySQL query
+      // It should return a Promise that resolves with the result of the query
+  
+      res.status(201).json({ message: "Save form2 data successfully", success: true });
+    } catch (error) {
+      console.error('Error storing data in the database:', error);
+      res.status(500).send('Error storing data in the database');
+    }
+  });
+
+
   //Example function to promisify MySQL query
   
   function queryAsync(sql, values) {
