@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const getConnection = require('./database');
-require('dotenv').config();
-const secretKey = process.env.SECRET_KEY
+// const getConnection = require('./database');
+const dbService = require('./dbService');
 
 
 // Middleware to authenticate JWT
@@ -58,26 +55,84 @@ const secretKey = process.env.SECRET_KEY
 //   }
 // });
 
-router.post("/master", async (req, res) => {
-  const { code, groupbc, rrnumber,name,cast,mobileno,id,photo} = req.body;
+// router.post("/master", async (req, res) => {
+//   const { code, groupbc, rrnumber,name,cast,mobileno,id,photo} = req.body;
+//   try {
+//     getConnection((err, connection) => {
+//       if (err) {
+//         console.error("Error getting database connection:", err);
+//         return res.status(500).json({ error: "Failed to save data" });
+//       }
+//         const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber,name,cast,mobileno,id,photo) VALUES (?, ?,?,?,?,?,?,?)";
+//         connection.query(insertUserQuery, [code, groupbc, rrnumber,name,cast,mobileno,id,photo], (error, result) => {
+//           connection.release();
+//           if (error) {
+//             return res.status(500).json({ error: "Failed to register user" });
+//           }
+//           res.status(201).json({ message: "save master data successfully", success: true });
+//         });
+//       });
+//   } catch (error) {
+//     console.error("Error during save data:", error);
+//     return res.status(500).json({ error: "Failed to save data" });
+//   }
+// });
+
+router.post("/upload", upload.single('photo'), async (req, res) => {
+  const { code, groupbc, rrnumber, name, cast, mobileno, id, photo } = req.body;
+  const imageData = photo[0];
   try {
-    getConnection((err, connection) => {
-      if (err) {
-        console.error("Error getting database connection:", err);
-        return res.status(500).json({ error: "Failed to save data" });
-      }
-        const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber,name,cast,mobileno,id,photo) VALUES (?, ?,?,?,?,?,?,?)";
-        connection.query(insertUserQuery, [code, groupbc, rrnumber,name,cast,mobileno,id,photo], (error, result) => {
-          connection.release();
-          if (error) {
-            return res.status(500).json({ error: "Failed to register user" });
-          }
-          res.status(201).json({ message: "save master data successfully", success: true });
-        });
-      });
+    const connection = await dbService.getConnection();
+
+    const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo) VALUES (?, ?,?,?,?,?,?,?)";
+    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData]);
+
+    connection.release();
+    res.status(201).json({ message: "save master data successfully", success: true });
   } catch (error) {
     console.error("Error during save data:", error);
     return res.status(500).json({ error: "Failed to save data" });
+  }
+});
+
+
+router.post('/create-group', async (req, res) => {
+  const { groupName, members, amount } = req.body;
+
+  try {
+    const connection = await dbService.getConnection();
+    connection.release();
+
+    const sql = "INSERT INTO `group` (groupName, members, amount) VALUES (?, ?, ?)";
+    const result = await dbService.query(sql, [groupName, members, amount]);
+
+    if (result.affectedRows === 1) {
+      return res.status(201).json({ message: "created group successfully", success: true });
+    } else {
+      throw new Error('Failed to create group');
+    }
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).json({ error: 'Error storing data in the database' });
+  }
+});
+
+
+router.post('/create-form2', async (req, res) => {
+  try {
+    const { date, group, name, bcAmount, intNo, percentage, amount } = req.body;
+   // console.log(req.body);
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = "INSERT INTO form2 (date, group_, name, bcamount, intNo, percentage, amount) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount]);
+
+    connection.release();
+    res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
   }
 });
 
