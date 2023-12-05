@@ -107,7 +107,7 @@ app.post('/create-group', async (req, res) => {
     try {
       const { groupName, members, amount } = req.body;
   
-      const sql = "INSERT INTO `group` (groupName, members, amount) VALUES (?, ?, ?)";
+      const sql = "INSERT INTO group (groupName, members, amount) VALUES (?, ?, ?)";
       const result = await queryAsync(sql, [groupName, members, amount]);
   
       // Assuming queryAsync is a function to promisify the MySQL query
@@ -124,6 +124,7 @@ app.post('/create-group', async (req, res) => {
   app.post('/create-form2', async (req, res) => {
     try {
       const { date, group, name,bcAmount,intNo,percentage,amount } = req.body;
+      console.log(req.body)
   
       const sql = "INSERT INTO form2 (date, group_, name,bcamount,intNo,percentage,amount) VALUES (?, ?, ?,?,?,?,?)";
       const result = await queryAsync(sql, [date, group, name,bcAmount,intNo,percentage,amount]);
