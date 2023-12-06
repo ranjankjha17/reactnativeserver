@@ -85,7 +85,7 @@ router.post("/upload", upload.single('photo'), async (req, res) => {
     const connection = await dbService.getConnection();
 
     const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo) VALUES (?, ?,?,?,?,?,?,?)";
-    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, photo]);
+    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData]);
 
     connection.release();
     res.status(201).json({ message: "save master data successfully", success: true });
