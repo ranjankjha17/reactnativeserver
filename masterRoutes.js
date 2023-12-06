@@ -85,7 +85,7 @@ router.post("/upload", upload.single('photo'), async (req, res) => {
     const connection = await dbService.getConnection();
 
     const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo) VALUES (?, ?,?,?,?,?,?,?)";
-    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData]);
+    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, photo]);
 
     connection.release();
     res.status(201).json({ message: "save master data successfully", success: true });
@@ -136,5 +136,68 @@ router.post('/create-form2', async (req, res) => {
   }
 });
 
+
+router.get('/getimage', async (req, res) => {
+  try {
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = "select name,photo from master";
+    const results=await dbService.query(insertQuery);
+
+    connection.release();
+    res.json({ data: results });
+
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
+
+
+// router.post("/image", upload.single('photo'), async (req, res) => {
+//   const {  photo } = req.body;
+//  console.log("photo",photo)
+//   const imageData = photo[0];
+//   //console.log("imagedata",imageData)
+//   try {
+//     const connection = await dbService.getConnection();
+
+//     const insertUserQuery = "INSERT INTO image (photo) VALUES (?)";
+//     const result = await dbService.query(insertUserQuery, [photo]);
+
+//     connection.release();
+//     res.status(201).json({ message: "save image successfully", success: true });
+//   } catch (error) {
+//     console.error("Error during save data:", error);
+//     return res.status(500).json({ error: "Failed to save data" });
+//   }
+// });
+
+
+// router.post("/image", upload.single('photo'), async (req, res) => {
+//   const {  photo } = req.body;
+//  console.log("photo",photo)
+//   // const imageData = photo[0];
+//   // console.log("imagedata",imageData)
+//   const imagePath = req.file.path;
+
+//   // Read the image file
+//   const imageBuffer = fs.readFileSync(imagePath);
+
+//   try {
+//     const connection = await dbService.getConnection();
+
+//     const insertUserQuery = "INSERT INTO image (photo) VALUES (?)";
+//     const result = await dbService.query(insertUserQuery, [imageBuffer]);
+
+//     connection.release();
+//     res.status(201).json({ message: "save image successfully", success: true });
+//   } catch (error) {
+//     console.error("Error during save data:", error);
+//     return res.status(500).json({ error: "Failed to save data" });
+//   }
+// });
 
 module.exports = router;
