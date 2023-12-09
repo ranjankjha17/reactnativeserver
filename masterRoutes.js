@@ -155,6 +155,60 @@ router.get('/getimage', async (req, res) => {
   }
 });
 
+router.get('/get-group', async (req, res) => {
+  try {
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = "select * from `group`";
+    const results=await dbService.query(insertQuery);
+
+    connection.release();
+    res.json({ data: results });
+
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
+
+router.get('/get-code', async (req, res) => {
+  try {
+
+    const connection = await dbService.getConnection();
+
+    const selectQuery = "SELECT MAX(CAST(code AS SIGNED)) AS maxCode FROM master";
+
+    try {
+        const results = await dbService.query(selectQuery);
+    
+        let nextCode;
+    
+        if (results.length > 0) {
+            const maxCode = results[0].maxCode;
+            nextCode = (maxCode !== null ? maxCode + 1 : 1).toString();
+        } else {
+            // If no records exist, start with '1' or any initial value you prefer
+            nextCode = '1';
+        }
+    
+        res.json({ data: nextCode });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        connection.release();
+    }
+    
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
+
+
 
 // router.post("/image", upload.single('photo'), async (req, res) => {
 //   const {  photo } = req.body;
