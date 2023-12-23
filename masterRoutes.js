@@ -79,7 +79,13 @@ const dbService = require('./dbService');
 
 router.post("/upload", upload.single('photo'), async (req, res) => {
   const { code, groupbc, rrnumber, name, cast, mobileno, id, photo } = req.body;
-  const imageData = photo[0];
+ // const imageData = photo[0];
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  const imageData = req.file.buffer; // Image buffer from Multer
+
   try {
     const connection = await dbService.getConnection();
 
