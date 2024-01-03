@@ -169,7 +169,7 @@ router.get('/get-group', async (req, res) => {
     const results=await dbService.query(insertQuery);
 
     connection.release();
-    res.json({ data: results });
+    res.json({ data: results,success: true });
 
     // res.status(201).json({ message: "Save form2 data successfully", success: true });
   } catch (error) {
