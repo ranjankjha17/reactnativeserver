@@ -147,7 +147,7 @@ router.get('/getimage', async (req, res) => {
 
     const connection = await dbService.getConnection();
 
-    const insertQuery = "select name,photo from master";
+    const insertQuery = "select * from master";
     const results=await dbService.query(insertQuery);
 
     connection.release();
