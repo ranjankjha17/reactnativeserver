@@ -143,11 +143,11 @@ router.post('/create-form2', async (req, res) => {
 
 router.post('/transection', async (req, res) => {
   try {
-    const { code, name, transectionType, amountType, paymentMode, amount, mobilenumber } = req.body;
+    const { code, name, transectionType, paymentMode, amount, mobilenumber } = req.body;
     //console.log(code)
     let credit_amount=0
     let debit_amount=0
-    if (amountType === 'Debit') {
+    if (transectionType === 'Payment') {
        debit_amount = parseFloat(amount)
     } else {
        credit_amount = parseFloat(amount)
