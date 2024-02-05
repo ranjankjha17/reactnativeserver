@@ -144,7 +144,7 @@ router.post('/create-form2', async (req, res) => {
 router.post('/transection', async (req, res) => {
   try {
     const { code, name, transectionType, amountType, paymentMode, neat, mobilenumber } = req.body;
-    console.log(code)
+    //console.log(code)
     let credit_amount=0
     let debit_amount=0
     if (amountType === 'Debit') {
