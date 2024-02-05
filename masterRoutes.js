@@ -79,7 +79,7 @@ const dbService = require('./dbService');
 
 router.post("/upload", upload.single('photo'), async (req, res) => {
   const { code, groupbc, rrnumber, name, cast, mobileno, id, photo } = req.body;
- // const imageData = photo[0];
+  // const imageData = photo[0];
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
@@ -125,16 +125,42 @@ router.post('/create-group', async (req, res) => {
 
 router.post('/create-form2', async (req, res) => {
   try {
-    const { date, group, name, bcAmount, intNo, percentage, amount,bc_payment,c_code,gsum,user } = req.body;
-   // console.log(req.body);
+    const { date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user } = req.body;
+    // console.log(req.body);
 
     const connection = await dbService.getConnection();
 
     const insertQuery = "INSERT INTO form2 (date, group_, name, bcamount, intNo, percentage, amount,bc_payment,c_code,gsum,user) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
-    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount,bc_payment,c_code,gsum,user]);
+    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user]);
 
     connection.release();
     res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
+
+router.post('/transection', async (req, res) => {
+  try {
+    const { code, name, transectionType, amountType, paymentMode, neat, mobilenumber } = req.body;
+    console.log(code)
+    let credit_amount=0
+    let debit_amount=0
+    if (amountType === 'Debit') {
+       debit_amount = parseFloat(neat)
+    } else {
+       credit_amount = parseFloat(neat)
+    }
+    // console.log(req.body);
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = "INSERT INTO Transection (c_code,name,transection_type,credit_amount,debit_amount,mobilenumber,mode) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    await dbService.query(insertQuery, [code, name, transectionType, credit_amount,debit_amount, mobilenumber, paymentMode]);
+
+    connection.release();
+    res.status(201).json({ message: "Save Transection data successfully", success: true });
   } catch (error) {
     console.error('Error storing data in the database:', error);
     res.status(500).send('Error storing data in the database');
@@ -148,7 +174,7 @@ router.get('/getimage', async (req, res) => {
     const connection = await dbService.getConnection();
 
     const insertQuery = "select * from master";
-    const results=await dbService.query(insertQuery);
+    const results = await dbService.query(insertQuery);
 
     connection.release();
     res.json({ data: results });
@@ -166,10 +192,10 @@ router.get('/get-group', async (req, res) => {
     const connection = await dbService.getConnection();
 
     const insertQuery = "select * from `group`";
-    const results=await dbService.query(insertQuery);
+    const results = await dbService.query(insertQuery);
 
     connection.release();
-    res.json({ data: results,success: true });
+    res.json({ data: results, success: true });
 
     // res.status(201).json({ message: "Save form2 data successfully", success: true });
   } catch (error) {
@@ -186,26 +212,26 @@ router.get('/get-code', async (req, res) => {
     const selectQuery = "SELECT MAX(CAST(code AS SIGNED)) AS maxCode FROM master";
 
     try {
-        const results = await dbService.query(selectQuery);
-    
-        let nextCode;
-    
-        if (results.length > 0) {
-            const maxCode = results[0].maxCode;
-            nextCode = (maxCode !== null ? maxCode + 1 : 1).toString();
-        } else {
-            // If no records exist, start with '1' or any initial value you prefer
-            nextCode = '1';
-        }
-    
-        res.json({ data: nextCode });
+      const results = await dbService.query(selectQuery);
+
+      let nextCode;
+
+      if (results.length > 0) {
+        const maxCode = results[0].maxCode;
+        nextCode = (maxCode !== null ? maxCode + 1 : 1).toString();
+      } else {
+        // If no records exist, start with '1' or any initial value you prefer
+        nextCode = '1';
+      }
+
+      res.json({ data: nextCode });
     } catch (error) {
-        console.error('Error:', error.message);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
     } finally {
-        connection.release();
+      connection.release();
     }
-    
+
     // res.status(201).json({ message: "Save form2 data successfully", success: true });
   } catch (error) {
     console.error('Error storing data in the database:', error);
@@ -221,26 +247,26 @@ router.get('/get-intno', async (req, res) => {
     const selectQuery = "SELECT MAX(CAST(intNo AS SIGNED)) AS maxCode FROM form2";
 
     try {
-        const results = await dbService.query(selectQuery);
-    
-        let nextCode;
-    
-        if (results.length > 0) {
-            const maxCode = results[0].maxCode;
-            nextCode = (maxCode !== null ? maxCode + 1 : 1).toString();
-        } else {
-            // If no records exist, start with '1' or any initial value you prefer
-            nextCode = '1';
-        }
-    
-        res.json({ data: nextCode });
+      const results = await dbService.query(selectQuery);
+
+      let nextCode;
+
+      if (results.length > 0) {
+        const maxCode = results[0].maxCode;
+        nextCode = (maxCode !== null ? maxCode + 1 : 1).toString();
+      } else {
+        // If no records exist, start with '1' or any initial value you prefer
+        nextCode = '1';
+      }
+
+      res.json({ data: nextCode });
     } catch (error) {
-        console.error('Error:', error.message);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
     } finally {
-        connection.release();
+      connection.release();
     }
-    
+
     // res.status(201).json({ message: "Save form2 data successfully", success: true });
   } catch (error) {
     console.error('Error storing data in the database:', error);
