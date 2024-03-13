@@ -88,14 +88,23 @@ router.post('/login', async (req, res) => {
 
   try {
     const connection = await dbService.getConnection();
-    
+
     const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
     const results = await executeQuery(connection, query, [username, password]);
     connection.release()
 
     if (results.length > 0) {
-      const token = jwt.sign({ username: username }, secretKey, { expiresIn: '6h' });
-      return res.status(200).json({ message: "User logged in successfully", username: username, success: true, token });
+      const user = results[0]; // Assuming only one user is returned
+      const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: '6h' });
+
+      return res.status(200).json({ 
+        message: "User logged in successfully", 
+        username: user.username, 
+        permission: user.permission, // Include usertype in the response
+        company:user.company,
+        success: true, 
+        token 
+      });
     } else {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -188,19 +197,19 @@ router.post('/transection', async (req, res) => {
   try {
     const { code, name, transectionType, paymentMode, amount, mobilenumber } = req.body;
     //console.log(code)
-    let credit_amount=0
-    let debit_amount=0
+    let credit_amount = 0
+    let debit_amount = 0
     if (transectionType === 'Payment') {
-       debit_amount = parseFloat(amount)
+      debit_amount = parseFloat(amount)
     } else {
-       credit_amount = parseFloat(amount)
+      credit_amount = parseFloat(amount)
     }
     // console.log(req.body);
 
     const connection = await dbService.getConnection();
 
     const insertQuery = "INSERT INTO Transection (c_code,name,transection_type,credit_amount,debit_amount,mobilenumber,mode) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    await dbService.query(insertQuery, [code, name, transectionType, credit_amount,debit_amount, mobilenumber, paymentMode]);
+    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode]);
 
     connection.release();
     res.status(201).json({ message: "Save Transection data successfully", success: true });
