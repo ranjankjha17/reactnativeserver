@@ -85,14 +85,14 @@ router.post("/upload", upload.single('photo'), async (req, res) => {
 
 
 router.post('/create-group', async (req, res) => {
-  const { groupName, members, amount } = req.body;
+  const { groupName, members, amount,company } = req.body;
 
   try {
     const connection = await dbService.getConnection();
     connection.release();
 
-    const sql = "INSERT INTO `group` (groupName, members, amount) VALUES (?, ?, ?)";
-    const result = await dbService.query(sql, [groupName, members, amount]);
+    const sql = "INSERT INTO `group` (groupName, members, amount,company) VALUES (?, ?, ?,?)";
+    const result = await dbService.query(sql, [groupName, members, amount,company]);
 
     if (result.affectedRows === 1) {
       return res.status(201).json({ message: "created group successfully", success: true });
