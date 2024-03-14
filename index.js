@@ -3,9 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const app = express();
-const userRoutes=require('./userRoutes')
 const masterRoutes=require('./masterRoutes')
-const imageRoutes=require('./imageRoutes2')
 const port=process.env.PORT || 5000
 require('dotenv').config();
 
@@ -26,10 +24,8 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use('/',userRoutes)
-// app.use('/',contactRoutes)
+
  app.use('/',masterRoutes)
-//app.use('/',imageRoutes)
 
 app.get("/",(req,res)=>{
   res.send("can not Get")

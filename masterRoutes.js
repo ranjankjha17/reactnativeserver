@@ -9,75 +9,6 @@ const secretKey = "8794587125463258921456375"
 const dbService = require('./dbService');
 
 
-// Middleware to authenticate JWT
-// const authenticateJWT = (req, res, next) => {
-//   const token = req.header('Authorization');
-
-//   if (!token) {
-//     return res.sendStatus(401); // Unauthorized
-//   }
-
-//   jwt.verify(token, secretKey, (err, user) => {
-//     if (err) {
-//       return res.sendStatus(403); // Forbidden
-//     }
-
-//     req.user = user;
-//     next();
-//   });
-// };
-
-
-// router.post("/master",upload.single('photo'), async (req, res) => {
-//   const { code, groupbc, rrnumber,name,cast,mobileno,id} = req.body;
-//  console.log(req.file)
-//  console.log(req.body)
-//  const photo = req.file.buffer;
-//  console.log('photo',photo)
-
-//   try {
-//     getConnection((err, connection) => {
-//       if (err) {
-//         console.error("Error getting database connection:", err);
-//         return res.status(500).json({ error: "Failed to save data" });
-//       }
-//         const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber,name,cast,mobileno,id,photo) VALUES (?, ?,?,?,?,?,?,?)";
-//         connection.query(insertUserQuery, [code, groupbc, rrnumber,name,cast,mobileno,id,photo], (error, result) => {
-//           connection.release();
-//           if (error) {
-//             return res.status(500).json({ error: "Failed to register user" });
-//           }
-//           res.status(201).json({ message: "save master data successfully", success: true });
-//         });
-//       });
-//   } catch (error) {
-//     console.error("Error during save data:", error);
-//     return res.status(500).json({ error: "Failed to save data" });
-//   }
-// });
-
-// router.post("/master", async (req, res) => {
-//   const { code, groupbc, rrnumber,name,cast,mobileno,id,photo} = req.body;
-//   try {
-//     getConnection((err, connection) => {
-//       if (err) {
-//         console.error("Error getting database connection:", err);
-//         return res.status(500).json({ error: "Failed to save data" });
-//       }
-//         const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber,name,cast,mobileno,id,photo) VALUES (?, ?,?,?,?,?,?,?)";
-//         connection.query(insertUserQuery, [code, groupbc, rrnumber,name,cast,mobileno,id,photo], (error, result) => {
-//           connection.release();
-//           if (error) {
-//             return res.status(500).json({ error: "Failed to register user" });
-//           }
-//           res.status(201).json({ message: "save master data successfully", success: true });
-//         });
-//       });
-//   } catch (error) {
-//     console.error("Error during save data:", error);
-//     return res.status(500).json({ error: "Failed to save data" });
-//   }
-// });
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
@@ -97,13 +28,13 @@ router.post('/login', async (req, res) => {
       const user = results[0]; // Assuming only one user is returned
       const token = jwt.sign({ username: user.username }, secretKey, { expiresIn: '6h' });
 
-      return res.status(200).json({ 
-        message: "User logged in successfully", 
-        username: user.username, 
+      return res.status(200).json({
+        message: "User logged in successfully",
+        username: user.username,
         permission: user.permission, // Include usertype in the response
-        company:user.company,
-        success: true, 
-        token 
+        company: user.company,
+        success: true,
+        token
       });
     } else {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -327,48 +258,6 @@ router.get('/get-intno', async (req, res) => {
 });
 
 
-// router.post("/image", upload.single('photo'), async (req, res) => {
-//   const {  photo } = req.body;
-//  console.log("photo",photo)
-//   const imageData = photo[0];
-//   //console.log("imagedata",imageData)
-//   try {
-//     const connection = await dbService.getConnection();
 
-//     const insertUserQuery = "INSERT INTO image (photo) VALUES (?)";
-//     const result = await dbService.query(insertUserQuery, [photo]);
-
-//     connection.release();
-//     res.status(201).json({ message: "save image successfully", success: true });
-//   } catch (error) {
-//     console.error("Error during save data:", error);
-//     return res.status(500).json({ error: "Failed to save data" });
-//   }
-// });
-
-
-// router.post("/image", upload.single('photo'), async (req, res) => {
-//   const {  photo } = req.body;
-//  console.log("photo",photo)
-//   // const imageData = photo[0];
-//   // console.log("imagedata",imageData)
-//   const imagePath = req.file.path;
-
-//   // Read the image file
-//   const imageBuffer = fs.readFileSync(imagePath);
-
-//   try {
-//     const connection = await dbService.getConnection();
-
-//     const insertUserQuery = "INSERT INTO image (photo) VALUES (?)";
-//     const result = await dbService.query(insertUserQuery, [imageBuffer]);
-
-//     connection.release();
-//     res.status(201).json({ message: "save image successfully", success: true });
-//   } catch (error) {
-//     console.error("Error during save data:", error);
-//     return res.status(500).json({ error: "Failed to save data" });
-//   }
-// });
 
 module.exports = router;
