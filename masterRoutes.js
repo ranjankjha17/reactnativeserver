@@ -89,7 +89,7 @@ router.post('/login', async (req, res) => {
   try {
     const connection = await dbService.getConnection();
 
-    const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
+    const query = 'SELECT * FROM group_users WHERE username = ? AND password = ?';
     const results = await executeQuery(connection, query, [username, password]);
     connection.release()
 
