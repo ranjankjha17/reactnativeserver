@@ -61,7 +61,7 @@ const executeQuery = (connection, query, values) => {
 
 
 router.post("/upload", upload.single('photo'), async (req, res) => {
-  const { code, groupbc, rrnumber, name, cast, mobileno, id, photo } = req.body;
+  const { code, groupbc, rrnumber, name, cast, mobileno, id, photo,company } = req.body;
   // const imageData = photo[0];
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -72,8 +72,8 @@ router.post("/upload", upload.single('photo'), async (req, res) => {
   try {
     const connection = await dbService.getConnection();
 
-    const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo) VALUES (?, ?,?,?,?,?,?,?)";
-    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData]);
+    const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo,company) VALUES (?, ?,?,?,?,?,?,?,?)";
+    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData,company]);
 
     connection.release();
     res.status(201).json({ message: "save master data successfully", success: true });
