@@ -186,6 +186,23 @@ router.get('/get-group', async (req, res) => {
     res.status(500).send('Error storing data in the database');
   }
 });
+router.get('/get-auction', async (req, res) => {
+  try {
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = "select * from form2";
+    const results = await dbService.query(insertQuery);
+
+    connection.release();
+    res.json({ data: results, success: true });
+
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
 
 // router.get('/get-code', async (req, res) => {
 //   try {
