@@ -60,26 +60,57 @@ const executeQuery = (connection, query, values) => {
 
 
 
+// router.post("/upload", upload.single('photo'), async (req, res) => {
+//   const { code, groupbc, rrnumber, name, cast, mobileno, id, photo,company } = req.body;
+//   // const imageData = photo[0];
+//   if (!req.file) {
+//     return res.status(400).json({ error: 'No file uploaded' });
+//   }
+
+//   const imageData = req.file.buffer; // Image buffer from Multer
+
+//   try {
+//     const connection = await dbService.getConnection();
+
+//     const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo,company) VALUES (?, ?,?,?,?,?,?,?,?)";
+//     const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData,company]);
+
+//     connection.release();
+//     res.status(201).json({ message: "save master data successfully", success: true });
+//   } catch (error) {
+//     console.error("Error during save data:", error);
+//     return res.status(500).json({ error: "Failed to save data" });
+//   }
+// });
+
 router.post("/upload", upload.single('photo'), async (req, res) => {
-  const { code, groupbc, rrnumber, name, cast, mobileno, id, photo,company } = req.body;
-  // const imageData = photo[0];
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
+  const { code, groupbc, rrnumber, name, cast, mobileno, id, photo, company } = req.body;
 
-  const imageData = req.file.buffer; // Image buffer from Multer
-
-  try {
-    const connection = await dbService.getConnection();
-
-    const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo,company) VALUES (?, ?,?,?,?,?,?,?,?)";
-    const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData,company]);
-
-    connection.release();
-    res.status(201).json({ message: "save master data successfully", success: true });
-  } catch (error) {
-    console.error("Error during save data:", error);
-    return res.status(500).json({ error: "Failed to save data" });
+  // Check if req.file exists (i.e., if photo is uploaded)
+  if (req.file) {
+    const imageData = req.file.buffer; // Image buffer from Multer
+    try {
+      const connection = await dbService.getConnection();
+      const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, photo, company) VALUES (?, ?,?,?,?,?,?,?,?)";
+      const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, imageData, company]);
+      connection.release();
+      return res.status(201).json({ message: "save master data successfully", success: true });
+    } catch (error) {
+      console.error("Error during save data:", error);
+      return res.status(500).json({ error: "Failed to save data" });
+    }
+  } else {
+    // Image file is not present, proceed without saving photo
+    try {
+      const connection = await dbService.getConnection();
+      const insertUserQuery = "INSERT INTO master (code, groupbc, rrnumber, name, cast, mobileno, id, company) VALUES (?, ?,?,?,?,?,?,?)";
+      const result = await dbService.query(insertUserQuery, [code, groupbc, rrnumber, name, cast, mobileno, id, company]);
+      connection.release();
+      return res.status(201).json({ message: "save master data successfully", success: true });
+    } catch (error) {
+      console.error("Error during save data:", error);
+      return res.status(500).json({ error: "Failed to save data" });
+    }
   }
 });
 
