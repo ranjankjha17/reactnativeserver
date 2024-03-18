@@ -8,7 +8,7 @@ const port=process.env.PORT || 5000
 require('dotenv').config();
 
 app.use((req, res, next) => {
-  const allowedOrigins = [ 'http://localhost:19006','https://reactnativeserver.vercel.app'];
+  const allowedOrigins = [ 'http://localhost:19006','http://localhost:3000','https://reactnativeserver.vercel.app'];
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin)) {
