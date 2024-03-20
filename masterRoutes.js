@@ -200,6 +200,24 @@ router.get('/getimage', async (req, res) => {
   }
 });
 
+router.get('/get-client-amount', async (req, res) => {
+  try {
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = "select * from CombinedViewForClientAmount";
+    const results = await dbService.query(insertQuery);
+
+    connection.release();
+    res.json({ data: results });
+
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
+
 router.get('/get-group', async (req, res) => {
   try {
 
