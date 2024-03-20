@@ -157,7 +157,7 @@ router.post('/create-form2', async (req, res) => {
 
 router.post('/transection', async (req, res) => {
   try {
-    const { code, name, transectionType, paymentMode, amount, mobilenumber,company,group_ } = req.body;
+    const { code, name, transectionType, paymentMode, amount, mobilenumber,company,group_,username,usertype } = req.body;
     //console.log(code)
     let credit_amount = 0
     let debit_amount = 0
@@ -170,8 +170,8 @@ router.post('/transection', async (req, res) => {
 
     const connection = await dbService.getConnection();
 
-    const insertQuery = "INSERT INTO Transection (c_code,name,transection_type,credit_amount,debit_amount,mobilenumber,mode,company,group_) VALUES (?,?,?, ?, ?, ?, ?, ?, ?)";
-    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode,company,group_]);
+    const insertQuery = "INSERT INTO Transection (c_code,name,transection_type,credit_amount,debit_amount,mobilenumber,mode,company,group_,type,user,user_type) VALUES (?,?,?,?,?,?, ?, ?, ?, ?, ?, ?)";
+    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode,company,group_,"credit",username,usertype]);
 
     connection.release();
     res.status(201).json({ message: "Save Transection data successfully", success: true });
