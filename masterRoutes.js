@@ -167,11 +167,17 @@ router.post('/transection', async (req, res) => {
       credit_amount = parseFloat(amount)
     }
     // console.log(req.body);
+    let type=''
+    if(usertype==='admin'){
+      type='credit'
+    }else{
+      type='rc'
+    }
 
     const connection = await dbService.getConnection();
 
     const insertQuery = "INSERT INTO Transection (c_code,name,transection_type,credit_amount,debit_amount,mobilenumber,mode,company,group_,type,user,user_type) VALUES (?,?,?,?,?,?, ?, ?, ?, ?, ?, ?)";
-    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode,company,group_,"credit",username,usertype]);
+    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode,company,group_,type,username,usertype]);
 
     connection.release();
     res.status(201).json({ message: "Save Transection data successfully", success: true });
