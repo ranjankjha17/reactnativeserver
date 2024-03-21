@@ -187,6 +187,28 @@ router.post('/transection', async (req, res) => {
   }
 });
 
+router.get('/get-calculate-amountOfUser', async (req, res) => {
+  const { user } = req.query;
+
+  try {
+
+    const connection = await dbService.getConnection();
+
+    const insertQuery = `SELECT SUM(credit_amount) - SUM(debit_amount) AS total_amount FROM Transection
+     WHERE user_type ='user' AND user =${user} AND type = 'rc' GROUP BY user_type, user, type`;
+    
+    const results = await dbService.query(insertQuery);
+
+    connection.release();
+    res.json({ data: results });
+
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
+
 
 router.get('/getimage', async (req, res) => {
   try {
