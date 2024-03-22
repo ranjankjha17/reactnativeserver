@@ -187,25 +187,60 @@ router.post('/transection', async (req, res) => {
   }
 });
 
+// router.get('/get-calculate-amountOfUser', async (req, res) => {
+//   const user  = req.query.user;
+
+//   try {
+
+//     const connection = await dbService.getConnection();
+//     const insertQuery = `SELECT SUM(credit_amount) - SUM(debit_amount) AS total_amount FROM Transection
+//      WHERE user_type ='user' AND user ='abc' AND type = 'rc' GROUP BY user_type, user, type`;
+    
+//     const results = await dbService.query(insertQuery,[user]);
+//     if (results.rows.length === 0) {
+//       return res.status(404).json({ error: 'No transactions found for the given criteria' });
+//     }
+//     const { total_amount } = results.rows[0];
+
+//     connection.release();
+//     res.json({ data: total_amount });
+
+//     // res.status(201).json({ message: "Save form2 data successfully", success: true });
+//   } catch (error) {
+//     console.error('Error storing data in the database:', error);
+//     res.status(500).send('Error storing data in the database');
+//   }
+// });
+
 router.get('/get-calculate-amountOfUser', async (req, res) => {
-  const { user } = req.query;
+  const user = req.query.user;
+  //console.log("user", user);
 
   try {
-
     const connection = await dbService.getConnection();
+    const query = `
+      SELECT 
+        IFNULL(SUM(credit_amount), 0) - IFNULL(SUM(debit_amount), 0) AS total_amount 
+      FROM 
+        Transection
+      WHERE 
+        user_type = 'user' AND
+        user = ? AND
+        type = 'rc'`;
 
-    const insertQuery = `SELECT SUM(credit_amount) - SUM(debit_amount) AS total_amount FROM Transection
-     WHERE user_type ='user' AND user =${user} AND type = 'rc' GROUP BY user_type, user, type`;
-    
-    const results = await dbService.query(insertQuery);
+    const results = await dbService.query(query, [user]);
+
+    if (!results || !results.length || !results[0].total_amount) {
+      return res.status(404).json({ error: 'No transactions found for the given user' });
+    }
+
+    const { total_amount } = results[0];
 
     connection.release();
-    res.json({ data: results });
-
-    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+    res.json({ data: total_amount });
   } catch (error) {
-    console.error('Error storing data in the database:', error);
-    res.status(500).send('Error storing data in the database');
+    console.error('Error retrieving data from the database:', error);
+    res.status(500).json({ error: 'Error retrieving data from the database' });
   }
 });
 
