@@ -116,14 +116,14 @@ router.post("/upload", upload.single('photo'), async (req, res) => {
 
 
 router.post('/create-group', async (req, res) => {
-  const { groupName, members, amount,company } = req.body;
+  const { groupName, members, amount, company } = req.body;
 
   try {
     const connection = await dbService.getConnection();
     connection.release();
 
     const sql = "INSERT INTO `group` (groupName, members, amount,company) VALUES (?, ?, ?,?)";
-    const result = await dbService.query(sql, [groupName, members, amount,company]);
+    const result = await dbService.query(sql, [groupName, members, amount, company]);
 
     if (result.affectedRows === 1) {
       return res.status(201).json({ message: "created group successfully", success: true });
@@ -139,13 +139,13 @@ router.post('/create-group', async (req, res) => {
 
 router.post('/create-form2', async (req, res) => {
   try {
-    const { date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user,company } = req.body;
+    const { date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user, company } = req.body;
     // console.log(req.body);
 
     const connection = await dbService.getConnection();
 
     const insertQuery = "INSERT INTO form2 (date, group_, name, bcamount, intNo, percentage, amount,bc_payment,c_code,gsum,user,company) VALUES (?,?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
-    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user,company]);
+    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user, company]);
 
     connection.release();
     res.status(201).json({ message: "Save form2 data successfully", success: true });
@@ -157,7 +157,7 @@ router.post('/create-form2', async (req, res) => {
 
 router.post('/transection', async (req, res) => {
   try {
-    const { code, name, transectionType, paymentMode, amount, mobilenumber,company,group_,username,usertype } = req.body;
+    const { code, name, transectionType, paymentMode, amount, mobilenumber, company, group_, username, usertype } = req.body;
     //console.log(code)
     let credit_amount = 0
     let debit_amount = 0
@@ -167,17 +167,17 @@ router.post('/transection', async (req, res) => {
       credit_amount = parseFloat(amount)
     }
     // console.log(req.body);
-    let type=''
-    if(usertype==='admin'){
-      type='credit'
-    }else{
-      type='rc'
+    let type = ''
+    if (usertype === 'admin') {
+      type = 'credit'
+    } else {
+      type = 'rc'
     }
 
     const connection = await dbService.getConnection();
 
     const insertQuery = "INSERT INTO Transection (c_code,name,transection_type,credit_amount,debit_amount,mobilenumber,mode,company,group_,type,user,user_type) VALUES (?,?,?,?,?,?, ?, ?, ?, ?, ?, ?)";
-    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode,company,group_,type,username,usertype]);
+    await dbService.query(insertQuery, [code, name, transectionType, credit_amount, debit_amount, mobilenumber, paymentMode, company, group_, type, username, usertype]);
 
     connection.release();
     res.status(201).json({ message: "Save Transection data successfully", success: true });
@@ -188,20 +188,28 @@ router.post('/transection', async (req, res) => {
 });
 
 router.get('/get-transection', async (req, res) => {
+  const user = req.params.user;
   try {
-
     const connection = await dbService.getConnection();
+    const query = `
+      SELECT * 
+      FROM 
+        Transection
+      WHERE 
+        user_type = 'user' AND
+        user = ? AND
+        type = 'rc'`;
+    const results = await dbService.query(query, [user]);
 
-    const insertQuery = "select * from Transection";
-    const results = await dbService.query(insertQuery);
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: 'No transactions found for the given user' });
+    }
 
     connection.release();
     res.json({ data: results });
-
-    // res.status(201).json({ message: "Save form2 data successfully", success: true });
   } catch (error) {
-    console.error('Error storing data in the database:', error);
-    res.status(500).send('Error storing data in the database');
+    console.error('Error retrieving data from the database:', error);
+    res.status(500).json({ error: 'Error retrieving data from the database' });
   }
 });
 
