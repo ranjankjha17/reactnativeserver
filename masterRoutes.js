@@ -187,30 +187,23 @@ router.post('/transection', async (req, res) => {
   }
 });
 
-// router.get('/get-calculate-amountOfUser', async (req, res) => {
-//   const user  = req.query.user;
+router.get('/get-transection', async (req, res) => {
+  try {
 
-//   try {
+    const connection = await dbService.getConnection();
 
-//     const connection = await dbService.getConnection();
-//     const insertQuery = `SELECT SUM(credit_amount) - SUM(debit_amount) AS total_amount FROM Transection
-//      WHERE user_type ='user' AND user ='abc' AND type = 'rc' GROUP BY user_type, user, type`;
-    
-//     const results = await dbService.query(insertQuery,[user]);
-//     if (results.rows.length === 0) {
-//       return res.status(404).json({ error: 'No transactions found for the given criteria' });
-//     }
-//     const { total_amount } = results.rows[0];
+    const insertQuery = "select * from Transection";
+    const results = await dbService.query(insertQuery);
 
-//     connection.release();
-//     res.json({ data: total_amount });
+    connection.release();
+    res.json({ data: results });
 
-//     // res.status(201).json({ message: "Save form2 data successfully", success: true });
-//   } catch (error) {
-//     console.error('Error storing data in the database:', error);
-//     res.status(500).send('Error storing data in the database');
-//   }
-// });
+    // res.status(201).json({ message: "Save form2 data successfully", success: true });
+  } catch (error) {
+    console.error('Error storing data in the database:', error);
+    res.status(500).send('Error storing data in the database');
+  }
+});
 
 router.get('/get-calculate-amountOfUser', async (req, res) => {
   const user = req.query.user;
