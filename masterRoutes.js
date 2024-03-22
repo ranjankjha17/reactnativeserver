@@ -188,7 +188,12 @@ router.post('/transection', async (req, res) => {
 });
 
 router.get('/get-transection', async (req, res) => {
-  const user = req.params.user;
+  const user = req.query.user;
+  //console.log(user)
+  // Check if user parameter is provided
+  if (!user) {
+    return res.status(400).json({ error: 'User parameter is missing' });
+  }
   try {
     const connection = await dbService.getConnection();
     const query = `
@@ -197,7 +202,7 @@ router.get('/get-transection', async (req, res) => {
         Transection
       WHERE 
         user_type = 'user' AND
-        user = 'abc' AND
+        user = ? AND
         type = 'rc'`;
     const results = await dbService.query(query, [user]);
 
