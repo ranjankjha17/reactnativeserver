@@ -197,7 +197,7 @@ router.get('/get-transection', async (req, res) => {
         Transection
       WHERE 
         user_type = 'user' AND
-        user = ? AND
+        user = 'abc' AND
         type = 'rc'`;
     const results = await dbService.query(query, [user]);
 
