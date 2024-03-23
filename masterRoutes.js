@@ -188,7 +188,7 @@ router.post('/transection', async (req, res) => {
 });
 
 router.put('/update-transaction-type', async (req, res) => {
-  const { trans_ids, type } = req.body;
+  const { trans_ids, type,sheetnumber } = req.body;
 //console.log(trans_ids,type)
   if (!trans_ids || !Array.isArray(trans_ids) || trans_ids.length === 0) {
     return res.status(400).json({ error: 'Invalid or missing trans_ids' });
@@ -200,11 +200,11 @@ router.put('/update-transaction-type', async (req, res) => {
     // Construct the SQL query with multiple trans_id values using IN clause
     const query = `
       UPDATE Transection
-      SET type = ?
+      SET type = ?, sheetnumber=?
       WHERE tran_id IN (?)`;
 
     // Execute the query with trans_ids and type as parameters
-    const result = await dbService.query(query, [type, trans_ids]);
+    const result = await dbService.query(query, [type,sheetnumber, trans_ids]);
 
     connection.release();
 
