@@ -187,6 +187,38 @@ router.post('/transection', async (req, res) => {
   }
 });
 
+router.put('/update-transaction-type', async (req, res) => {
+  const { trans_ids, type } = req.body;
+
+  if (!trans_ids || !Array.isArray(trans_ids) || trans_ids.length === 0) {
+    return res.status(400).json({ error: 'Invalid or missing trans_ids' });
+  }
+
+  try {
+    const connection = await dbService.getConnection();
+
+    // Construct the SQL query with multiple trans_id values using IN clause
+    const query = `
+      UPDATE Transection
+      SET type = ?
+      WHERE tran_id IN (?)`;
+
+    // Execute the query with trans_ids and type as parameters
+    const result = await dbService.query(query, [type, trans_ids]);
+
+    connection.release();
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Transactions not found' });
+    }
+
+    res.status(200).json({ message: 'Transaction types updated successfully',success: true });
+  } catch (error) {
+    console.error('Error updating transaction types:', error);
+    res.status(500).json({ error: 'Error updating transaction types' });
+  }
+});
+
 router.get('/get-transection', async (req, res) => {
   const user = req.query.user;
   //console.log(user)
