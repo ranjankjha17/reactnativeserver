@@ -189,7 +189,7 @@ router.post('/transection', async (req, res) => {
 
 router.put('/update-transaction-type', async (req, res) => {
   const { trans_ids, type } = req.body;
-
+//console.log(trans_ids,type)
   if (!trans_ids || !Array.isArray(trans_ids) || trans_ids.length === 0) {
     return res.status(400).json({ error: 'Invalid or missing trans_ids' });
   }
