@@ -250,6 +250,28 @@ router.get('/get-transection', async (req, res) => {
   }
 });
 
+router.get('/get-transection-alldata', async (req, res) => {
+  try {
+    const connection = await dbService.getConnection();
+    const query = `
+      SELECT * 
+      FROM 
+        Transection`;
+    const results = await dbService.query(query);
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: 'No transactions found' });
+    }
+
+    connection.release();
+    res.json({ data: results });
+  } catch (error) {
+    console.error('Error retrieving data from the database:', error);
+    res.status(500).json({ error: 'Error retrieving data from the database' });
+  }
+});
+
+
 router.get('/get-calculate-amountOfUser', async (req, res) => {
   const user = req.query.user;
   //console.log("user", user);
