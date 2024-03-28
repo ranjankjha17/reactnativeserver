@@ -141,11 +141,12 @@ router.post('/create-form2', async (req, res) => {
   try {
     const { date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user, company } = req.body;
     // console.log(req.body);
-
+    const payment="pending"
+    const pay_date=''
     const connection = await dbService.getConnection();
 
-    const insertQuery = "INSERT INTO form2 (date, group_, name, bcamount, intNo, percentage, amount,bc_payment,c_code,gsum,user,company) VALUES (?,?, ?, ?, ?, ?, ?, ?,?,?,?,?)";
-    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user, company]);
+    const insertQuery = "INSERT INTO form2 (date, group_, name, bcamount, intNo, percentage, amount,bc_payment,c_code,gsum,user,company,payment,pay_date) VALUES (?,?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)";
+    await dbService.query(insertQuery, [date, group, name, bcAmount, intNo, percentage, amount, bc_payment, c_code, gsum, user, company,payment,pay_date]);
 
     connection.release();
     res.status(201).json({ message: "Save form2 data successfully", success: true });
